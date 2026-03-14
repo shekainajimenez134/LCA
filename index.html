@@ -3,58 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UF Museum: LCA SimCity Edition</title>
+    <title>EcoCorp: Carbon Executive</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=VT323&family=Inter:wght@400;700;900&display=swap');
         
         :root {
-            --uf-orange: #FF7000;
-            --uf-blue: #0021A5;
-            --sim-bg: #2d5a27; /* Classic SimCity Green */
-            --panel-bg: #d1d5db;
-            --panel-border-light: #f3f4f6;
-            --panel-border-dark: #4b5563;
+            --corp-blue: #1e293b;
+            --corp-accent: #10b981;
+            --sim-bg: #111827; 
+            --panel-bg: #1f2937;
+            --panel-border: #374151;
         }
 
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--sim-bg);
-            background-image: 
-                linear-gradient(45deg, #34632d 25%, transparent 25%), 
-                linear-gradient(-45deg, #34632d 25%, transparent 25%), 
-                linear-gradient(45deg, transparent 75%, #34632d 75%), 
-                linear-gradient(-45deg, transparent 75%, #34632d 75%);
-            background-size: 40px 40px;
-            background-position: 0 0, 0 20px, 20px 20px, 20px 0;
-            color: #111827;
+            color: #f3f4f6;
             overflow-x: hidden;
         }
 
         .sim-panel {
             background-color: var(--panel-bg);
-            border-top: 4px solid var(--panel-border-light);
-            border-left: 4px solid var(--panel-border-light);
-            border-right: 4px solid var(--panel-border-dark);
-            border-bottom: 4px solid var(--panel-border-dark);
-            box-shadow: 6px 6px 0px rgba(0,0,0,0.3);
+            border: 2px solid var(--panel-border);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
         }
 
         .sim-button {
-            background-color: #9ca3af;
-            border-top: 3px solid #f3f4f6;
-            border-left: 3px solid #f3f4f6;
-            border-right: 3px solid #374151;
-            border-bottom: 3px solid #374151;
-            transition: all 0.1s;
+            background-color: #374151;
+            border: 1px solid #4b5563;
+            transition: all 0.2s;
         }
 
-        .sim-button:active {
-            border-top: 3px solid #374151;
-            border-left: 3px solid #374151;
-            border-right: 3px solid #f3f4f6;
-            border-bottom: 3px solid #f3f4f6;
-            transform: translate(2px, 2px);
+        .sim-button:hover:not(:disabled) {
+            background-color: #4b5563;
+            border-color: var(--corp-accent);
+            transform: translateY(-1px);
+        }
+
+        .sim-button:active:not(:disabled) {
+            transform: translateY(1px);
         }
 
         .pixel-font {
@@ -63,8 +51,8 @@
 
         .ticker-container {
             background: #000;
-            color: #0f0;
-            border: 3px solid var(--panel-border-dark);
+            color: var(--corp-accent);
+            border-bottom: 2px solid #000;
             overflow: hidden;
             white-space: nowrap;
         }
@@ -72,9 +60,9 @@
         .ticker-text {
             display: inline-block;
             padding-left: 100%;
-            animation: ticker 25s linear infinite;
+            animation: ticker 30s linear infinite;
             font-family: 'VT323', monospace;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
         }
 
         @keyframes ticker {
@@ -82,122 +70,141 @@
             100% { transform: translate(-100%, 0); }
         }
 
-        .stat-led {
-            background: #111;
-            border: 2px inset #444;
-            padding: 4px 10px;
-            color: #3bfd3b;
-            font-family: 'VT323', monospace;
-            font-size: 1.5rem;
-            text-shadow: 0 0 5px #3bfd3b;
+        .stat-display {
+            background: #000;
+            border-radius: 4px;
+            padding: 8px 12px;
+            border: 1px solid #333;
         }
 
-        .gator-gradient {
-            background: linear-gradient(135deg, var(--uf-blue) 0%, #00166d 100%);
+        .progress-bar-bg {
+            background: #111;
+            height: 12px;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+
+        .carbon-limit-bar {
+            height: 100%;
+            transition: width 0.5s ease-in-out, background-color 0.5s;
+        }
+
+        .leaf-rating {
+            color: #10b981;
+            filter: drop-shadow(0 0 2px rgba(16, 185, 129, 0.5));
         }
     </style>
 </head>
 <body class="min-h-screen">
 
-    <!-- Top Bar -->
-    <div class="w-full gator-gradient text-white p-2 border-b-4 border-black flex justify-between items-center shadow-2xl">
-        <div class="flex items-center space-x-3">
-            <div class="bg-white p-1 rounded">
-                <svg width="30" height="30" viewBox="0 0 100 100" fill="var(--uf-blue)">
-                    <rect x="10" y="10" width="80" height="80" rx="5" fill="var(--uf-orange)"/>
-                    <path d="M30 30h40v40H30z" fill="white"/>
-                    <path d="M40 40h20v20H40z" fill="var(--uf-blue)"/>
-                </svg>
+    <!-- Top Navigation / Brand -->
+    <header class="bg-slate-900 border-b border-slate-700 p-4 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-emerald-500 rounded flex items-center justify-center font-black text-slate-900 text-xl shadow-[0_0_15px_rgba(16,185,129,0.4)]">EC</div>
+                <div>
+                    <h1 class="font-black text-xl tracking-tight uppercase leading-none">EcoCorp</h1>
+                    <p class="text-[10px] text-emerald-500 font-bold uppercase tracking-widest">Sustainability Dashboard v5.0</p>
+                </div>
             </div>
-            <div>
-                <h1 class="pixel-font text-2xl leading-none">UF-CITY: LCA MANAGER</h1>
-                <p class="text-[10px] uppercase font-bold tracking-widest text-orange-400">Gainesville Municipal Authority</p>
-            </div>
-        </div>
-        <div class="flex space-x-4 pr-4">
-            <div class="text-right">
-                <div class="text-[10px] uppercase opacity-70">Project Date</div>
-                <div class="pixel-font text-xl">OCT 2024</div>
+            <div class="flex space-x-8">
+                <div class="text-center">
+                    <p class="text-[10px] text-slate-400 uppercase">Quarterly Operations</p>
+                    <p class="pixel-font text-xl text-emerald-400" id="game-clock">PHASE 1</p>
+                </div>
             </div>
         </div>
-    </div>
+    </header>
 
     <!-- Ticker -->
     <div class="ticker-container py-1">
         <div id="ticker" class="ticker-text">
-            ADVISOR: WELCOME MAYOR... UF NATURAL HISTORY MUSEUM PROJECT IS UNDERWAY... CITIZENS DEMAND SUSTAINABILITY... WATCH YOUR BUDGET... GATORS ARE WATCHING...
+            MARKET UPDATE: CARBON TAX CREDITS TRADING AT RECORD HIGHS... NEW EU REGULATION TARGETS SCOPE 3 EMISSIONS... BREAKTHROUGH IN HYDROGEN TRUCKING...
         </div>
     </div>
 
-    <main class="max-w-5xl mx-auto mt-6 grid grid-cols-12 gap-6 p-4">
+    <main class="max-w-7xl mx-auto mt-6 grid grid-cols-12 gap-6 p-4">
         
-        <!-- Left Stats Sidebar (Sim Style) -->
-        <div class="col-span-12 md:col-span-3 space-y-4">
-            <div class="sim-panel p-4">
-                <h3 class="pixel-font text-xl border-b-2 border-gray-400 mb-3">CITY FUNDS</h3>
-                <div class="stat-led" id="budget-val">$10,000,000</div>
-                <div class="mt-4 text-[10px] font-bold text-gray-600 uppercase">Approval Rating</div>
-                <div class="w-full bg-gray-400 h-4 border-2 border-gray-600 mt-1">
-                    <div id="rep-fill" class="h-full bg-orange-500 transition-all duration-500" style="width: 50%"></div>
+        <!-- Left Column: KPIs -->
+        <div class="col-span-12 lg:col-span-4 space-y-4">
+            <!-- Carbon Budget -->
+            <div class="sim-panel p-5 border-t-4 border-t-red-500">
+                <h3 class="pixel-font text-2xl text-slate-300 mb-2 uppercase flex justify-between">
+                    Carbon Ceiling 
+                    <span id="carbon-percent" class="text-red-500">0%</span>
+                </h3>
+                <div class="progress-bar-bg mb-2">
+                    <div id="carbon-bar" class="carbon-limit-bar bg-emerald-500" style="width: 0%"></div>
+                </div>
+                <div class="stat-display flex justify-between items-center">
+                    <span class="text-xs text-slate-400 font-bold">EMISSIONS:</span>
+                    <span id="carbon-val" class="pixel-font text-2xl text-red-500">0 / 5,000 MT</span>
                 </div>
             </div>
 
-            <div class="sim-panel p-4">
-                <h3 class="pixel-font text-xl border-b-2 border-gray-400 mb-3">ENV. POLLUTION</h3>
-                <div class="stat-led !text-red-500 !shadow-red-500" id="carbon-val">0 KG</div>
-                <p class="text-[10px] mt-2 text-gray-500 leading-tight">GWP: GLOBAL WARMING POTENTIAL (LCA TARGET)</p>
+            <!-- Financials -->
+            <div class="sim-panel p-5 border-t-4 border-t-emerald-500">
+                <h3 class="pixel-font text-2xl text-slate-300 mb-2 uppercase">Company Treasury</h3>
+                <div class="stat-display mb-3">
+                    <span id="budget-val" class="pixel-font text-3xl text-emerald-400">$2,500,000</span>
+                </div>
+                <div class="flex justify-between text-[10px] font-bold text-slate-400">
+                    <span>REVENUE: <span id="revenue-val" class="text-emerald-500">+$0</span></span>
+                    <span>ECO-BONUSES: <span id="bonus-val" class="text-blue-400">0</span></span>
+                </div>
             </div>
 
-            <div class="sim-panel p-4 bg-blue-100">
-                <h3 class="pixel-font text-xl border-b-2 border-blue-300 mb-2">QUICK TIPS</h3>
-                <p id="advisor-tip" class="text-xs text-blue-800 italic">"Materials like timber sequester carbon, effectively acting as a carbon sink for the city!"</p>
+            <!-- News/Alerts -->
+            <div class="sim-panel p-5 bg-slate-800/50">
+                <h3 class="pixel-font text-xl text-slate-400 border-b border-slate-700 mb-2 uppercase">Executive Briefing</h3>
+                <p id="advisor-text" class="text-xs leading-relaxed text-slate-300 italic">"Manager, we've increased our procurement options. You now have access to mid-tier sustainable choices and experimental regenerative tech."</p>
             </div>
         </div>
 
-        <!-- Center Stage -->
-        <div class="col-span-12 md:col-span-9">
-            <div id="decision-card" class="sim-panel p-8 min-h-[400px] relative overflow-hidden">
-                <!-- Decorative Isometric Grid Background for Card -->
-                <div class="absolute inset-0 opacity-5 pointer-events-none" style="background-image: radial-gradient(#000 1px, transparent 1px); background-size: 20px 20px;"></div>
+        <!-- Center Column: Decision Engine -->
+        <div class="col-span-12 lg:col-span-8">
+            <div id="game-arena" class="sim-panel p-8 min-h-[600px] flex flex-col justify-between">
                 
-                <div class="relative z-10">
+                <div id="decision-content">
                     <div class="flex justify-between items-start mb-6">
                         <div>
-                            <span id="phase-display" class="bg-blue-800 text-white text-xs px-2 py-1 pixel-font uppercase">ZONE: STRUCTURAL</span>
-                            <h2 id="question-title" class="text-4xl font-black uppercase mt-2 tracking-tighter italic text-gray-800">The Skeleton</h2>
+                            <span id="phase-tag" class="bg-emerald-500/10 text-emerald-500 text-xs font-bold px-2 py-1 border border-emerald-500/20 uppercase tracking-widest">Module</span>
+                            <h2 id="question-title" class="text-4xl font-black text-white mt-2 tracking-tight">Loading Strategy...</h2>
                         </div>
-                        <div id="turn-display" class="pixel-font text-3xl text-gray-400">01</div>
+                        <div id="step-count" class="pixel-font text-4xl text-slate-600">01 / 05</div>
                     </div>
 
-                    <p id="question-desc" class="text-gray-700 text-lg mb-8 leading-relaxed font-medium bg-white/50 p-4 border-l-4 border-gray-400">
-                        Initial text loading...
+                    <p id="question-desc" class="text-slate-400 text-lg mb-8 leading-relaxed border-l-2 border-slate-700 pl-6">
+                        Description loading...
                     </p>
 
-                    <div id="options-container" class="grid grid-cols-1 gap-4">
+                    <div id="options-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <!-- Options injected here -->
                     </div>
+                </div>
 
-                    <!-- Feedback Area -->
-                    <div id="feedback-panel" class="hidden animate-pulse">
-                        <div class="bg-white border-4 border-blue-600 p-6 shadow-lg">
-                            <h3 class="pixel-font text-2xl text-blue-800 mb-2 underline">OFFICE OF SUSTAINABILITY REPORT:</h3>
-                            <p id="feedback-text" class="text-lg font-bold text-gray-800"></p>
-                            <button onclick="nextTurn()" class="mt-6 sim-button w-full py-4 text-xl font-black uppercase bg-orange-500 text-white hover:bg-orange-600">
-                                Confirm & Proceed >>
-                            </button>
-                        </div>
+                <!-- Feedback Layer -->
+                <div id="feedback-layer" class="hidden py-10 text-center space-y-6">
+                    <div id="impact-card" class="bg-slate-900 border border-slate-700 p-8 rounded-lg shadow-2xl relative overflow-hidden">
+                        <div id="eco-badge" class="hidden absolute top-4 right-4 bg-emerald-500 text-slate-900 font-black text-[10px] px-2 py-1 uppercase rounded transform rotate-12 shadow-lg">Eco-Optimal</div>
+                        <h3 class="text-emerald-500 font-bold uppercase tracking-widest mb-2">Impact Analysis</h3>
+                        <p id="feedback-body" class="text-xl text-slate-200"></p>
                     </div>
+                    <button onclick="nextDecision()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-4 rounded uppercase tracking-widest transition-all">
+                        Process Metrics & Continue
+                    </button>
                 </div>
-            </div>
 
-            <!-- End Screen (Hidden by default) -->
-            <div id="end-screen" class="hidden sim-panel p-12 text-center">
-                <h2 class="pixel-font text-6xl text-blue-900 mb-6">PROJECT ARCHIVED</h2>
-                <div id="final-stats" class="bg-black text-green-400 p-8 font-mono text-left inline-block border-4 border-gray-600 shadow-2xl">
+                <!-- Results -->
+                <div id="results-screen" class="hidden text-center py-10">
+                    <h2 class="text-6xl font-black text-white mb-4 uppercase">Quarterly Review</h2>
+                    <div id="final-stats" class="bg-black p-8 rounded border border-slate-700 text-left space-y-4 mb-8"></div>
+                    <button onclick="location.reload()" class="bg-white text-black px-12 py-4 font-black rounded uppercase hover:bg-emerald-500 hover:text-white transition-colors">
+                        Restart Operations
+                    </button>
                 </div>
-                <div class="mt-8">
-                    <button onclick="location.reload()" class="sim-button bg-blue-700 text-white px-12 py-4 text-2xl font-black italic">RE-INITIALIZE SIM</button>
-                </div>
+
             </div>
         </div>
     </main>
@@ -205,185 +212,170 @@
     <script>
         const gameData = [
             {
-                phase: "A1-A3: PRODUCTION",
-                title: "Structural Frame",
-                desc: "The University Board is reviewing structural options. Embodied carbon (Modules A1-A3) is locked in at the moment of purchase. Which path will UF take?",
+                module: "Source (A1-A3)",
+                title: "Primary Material",
+                desc: "Which core material will we use? This dictates the 'Embodied Carbon' of every unit. Virgin materials are cheap but carry heavy atmospheric debt.",
                 options: [
-                    {
-                        label: "Heavy Reinforced Concrete",
-                        feedback: "Standard for Florida. Cement calcination emits significant CO2, but it's hurricane-proof. High embodied impact.",
-                        carbon: 850, budget: -1.5, rep: 0, tip: "Concrete is durable but heavy on the climate."
-                    },
-                    {
-                        label: "Mass Timber (CLT)",
-                        feedback: "Revolutionary! Trees sequestered carbon while growing. This project will be a sustainable landmark for UF.",
-                        carbon: 180, budget: -2.8, rep: 25, tip: "Wood stores carbon, but watch your budget!"
-                    },
-                    {
-                        label: "Recycled Steel",
-                        feedback: "A balanced approach. Using electric arc furnaces for recycling saves energy compared to blast furnaces.",
-                        carbon: 450, budget: -2.0, rep: 10, tip: "Steel is 100% recyclable, helping future LCAs."
-                    }
+                    { label: "Virgin Steel", rating: 1, feedback: "Extremely carbon intensive. High furnace emissions drive our carbon debt through the roof.", carbon: 1800, cost: 150000, revenue: 800000 },
+                    { label: "Low-Carbon Concrete", rating: 2, feedback: "A modest improvement. Uses industrial byproducts to replace some clinker, reducing footprint by 30%.", carbon: 1200, cost: 250000, revenue: 850000 },
+                    { label: "Recycled Aluminum", rating: 3, feedback: "Great choice. Uses 95% less energy than virgin smelting. A standard for high-end sustainable hardware.", carbon: 400, cost: 450000, revenue: 900000 },
+                    { label: "Cross-Laminated Timber", rating: 4, isBest: true, feedback: "Regenerative Choice! Timber sequesters carbon. While our production costs are high, we earn massive LCA credits.", carbon: -200, cost: 750000, revenue: 1000000 }
                 ]
             },
             {
-                phase: "B1-B5: USE PHASE",
-                title: "The Envelope",
-                desc: "Gainesville heat is brutal. The 'Use Phase' (Module B) of your LCA will span 50 years. How do we keep the fossils cool?",
+                module: "Transport (A4)",
+                title: "Global Logistics",
+                desc: "How do we get the parts to our assembly hub? Speed usually equals emissions.",
                 options: [
-                    {
-                        label: "Standard Glass Walls",
-                        feedback: "Low upfront cost, but the 'Operational Carbon' will haunt your LCA reports for decades due to AC demand.",
-                        carbon: 1500, budget: -0.5, rep: -10, tip: "Cheap glass leads to expensive cooling bills."
-                    },
-                    {
-                        label: "Electrochromic Smart Tinting",
-                        feedback: "High tech! The glass tints based on sun position, slashing the operational energy footprint.",
-                        carbon: 350, budget: -1.8, rep: 15, tip: "Smart tech pays off in the long run."
-                    }
+                    { label: "Express Air Freight", rating: 1, feedback: "Fastest turnaround but 50x more carbon intensive than sea shipping. A climate disaster.", carbon: 1500, cost: 400000, revenue: 100000 },
+                    { label: "Heavy Trucking", rating: 2, feedback: "Standard diesel logistics. High Scope 3 emissions, but very flexible for just-in-time delivery.", carbon: 600, cost: 150000, revenue: 0 },
+                    { label: "Standard Ocean Cargo", rating: 2, feedback: "Efficient per ton, but slow. Uses heavy bunker fuel which contributes significantly to ocean acidification.", carbon: 350, cost: 80000, revenue: 0 },
+                    { label: "Electric Rail Fleet", rating: 3, feedback: "Zero tailpipe emissions. High CapEx to secure the route, but excellent for our long-term carbon budget.", carbon: 100, cost: 300000, revenue: 20000 },
+                    { label: "Bio-Fuel Shipping", rating: 4, isBest: true, feedback: "Pioneering technology! Using waste-oil fuels eliminates the fossil carbon burden of transport.", carbon: 50, cost: 550000, revenue: 150000 }
                 ]
             },
             {
-                phase: "B6: ENERGY",
-                title: "Grid vs Green",
-                desc: "How will we power the exhibits? This choice determines your annual carbon recurring costs.",
+                module: "Energy (A5)",
+                title: "Facility Power",
+                desc: "Our assembly lines run 24/7. Where does that power originate?",
                 options: [
-                    {
-                        label: "Local Utility Grid",
-                        feedback: "Reliable, but you're at the mercy of the current energy mix. Operational carbon remains high.",
-                        carbon: 1200, budget: 0, rep: -5, tip: "The grid is only as clean as the power plants."
-                    },
-                    {
-                        label: "Solar Canopy Park",
-                        feedback: "The museum becomes a net-generator. Massive reduction in Module B6 (Operational Energy).",
-                        carbon: 200, budget: -2.5, rep: 20, tip: "The Florida sun is free energy, Mayor!"
-                    }
+                    { label: "Coal-Heavy Grid", rating: 1, feedback: "The cheapest path. Unfortunately, our Scope 2 emissions will be among the highest in the industry.", carbon: 1400, cost: 50000, revenue: 0 },
+                    { label: "Natural Gas Mix", rating: 2, feedback: "A cleaner fossil fuel, but methane leaks in the supply chain still haunt our climate metrics.", carbon: 800, cost: 120000, revenue: 0 },
+                    { label: "Renewable Energy Credits (RECs)", rating: 2, feedback: "We technically offset our power, but it doesn't change the local grid mix. Better for PR than for the planet.", carbon: 500, cost: 180000, revenue: 50000 },
+                    { label: "On-site Micro-Hydro", rating: 3, feedback: "Clean, consistent power. High installation cost but pays off in total energy independence.", carbon: 100, cost: 800000, revenue: 150000 },
+                    { label: "Hydrogen Fuel Cells", rating: 4, isBest: true, feedback: "Experimental Power! Zero emissions. We are positioning ourselves as a leader in industrial decarbonization.", carbon: 0, cost: 1200000, revenue: 300000 }
                 ]
             },
             {
-                phase: "C1-C4: END OF LIFE",
-                title: "Deconstruction",
-                desc: "What happens in 2100? Cradle-to-Grave LCA requires we plan for the museum's eventual dismantling.",
+                module: "Usage (B)",
+                title: "Efficiency Design",
+                desc: "How much energy will customers use while operating our product?",
                 options: [
-                    {
-                        label: "Traditional Demolition",
-                        feedback: "Quick and cheap now, but high carbon cost in 75 years as everything goes to the Alachua County landfill.",
-                        carbon: 700, budget: 0, rep: -5, tip: "Landfills are the end of the line for materials."
-                    },
-                    {
-                        label: "Modular Design (DfD)",
-                        feedback: "Excellent planning. Components can be unbolted and reused, giving a 'Module D' credit for future systems.",
-                        carbon: -150, budget: -1.2, rep: 15, tip: "Design for Disassembly is the future of UF."
-                    }
+                    { label: "Performance Unlocked", rating: 1, feedback: "Users love the speed, but the energy draw is massive. Our total Use-Phase carbon is staggering.", carbon: 2200, cost: 0, revenue: 600000 },
+                    { label: "Standard Efficiency", rating: 2, feedback: "Average performance. No major carbon savings, but no major brand damage either.", carbon: 1200, cost: 50000, revenue: 300000 },
+                    { label: "Smart Energy Saving", rating: 3, feedback: "Advanced power management software reduces draw by 40%. A very solid mid-market green choice.", carbon: 600, cost: 250000, revenue: 450000 },
+                    { label: "Passive Architecture", rating: 4, isBest: true, feedback: "Engineering Masterclass! The product uses almost no power. This is the ultimate 'Eco-Design' achievement.", carbon: 100, cost: 600000, revenue: 700000 }
+                ]
+            },
+            {
+                module: "End of Life (C)",
+                title: "Disposal Strategy",
+                desc: "What happens when the product reaches its end of life? Landfills emit methane; recycling captures value.",
+                options: [
+                    { label: "No Take-Back Policy", rating: 1, feedback: "Cheap for us, but 100% of the materials end up in a landfill. A linear economy failure.", carbon: 800, cost: 0, revenue: 0 },
+                    { label: "Standard Recycling", rating: 2, feedback: "We encourage users to recycle. It helps, but we don't control the process, so efficiency is low.", carbon: 400, cost: 100000, revenue: 50000 },
+                    { label: "Refurbishment Program", rating: 3, feedback: "We buy back old units and resell them. This extends the product life and displaces virgin production.", carbon: 100, cost: 300000, revenue: 400000 },
+                    { label: "Cradle-to-Cradle Design", rating: 4, isBest: true, feedback: "Circular Economy Gold! Materials are 100% recoverable for new manufacturing. We've closed the loop.", carbon: -400, cost: 800000, revenue: 600000 }
                 ]
             }
         ];
 
-        let currentTurn = 0;
-        let stats = {
-            carbon: 0,
-            budget: 10.0,
-            rep: 50
-        };
-
-        const tickerMessages = [
-            "NEWS: UF RESEARCHERS DISCOVER NEW LOW-CARBON CEMENT MIX...",
-            "ECONOMY: MATERIAL COSTS RISING NATIONWIDE...",
-            "WEATHER: ANOTHER HOT SUMMER IN GAINESVILLE INCREASES COOLING DEMAND...",
-            "CAMPUS: STUDENTS PROTEST FOR GREENER BUILDINGS...",
-            "SPORTS: GATORS WIN! SPIRIT AT ALL TIME HIGH...",
-            "CITIZENS: 'WE WANT A MUSEUM THAT LASTS 100 YEARS!'"
-        ];
+        let currentDecision = 0;
+        let stats = { carbon: 0, carbonLimit: 5000, budget: 2500000, revenue: 0, ecoBonuses: 0 };
 
         function updateUI() {
-            // Stats Update
-            document.getElementById('budget-val').innerText = `$${(stats.budget * 1000000).toLocaleString()}`;
-            document.getElementById('carbon-val').innerText = `${stats.carbon.toLocaleString()} KG`;
-            document.getElementById('rep-fill').style.width = `${stats.rep}%`;
+            document.getElementById('carbon-val').innerText = `${stats.carbon.toLocaleString()} / ${stats.carbonLimit} MT`;
+            document.getElementById('budget-val').innerText = `$${stats.budget.toLocaleString()}`;
+            document.getElementById('revenue-val').innerText = `+$${stats.revenue.toLocaleString()}`;
+            document.getElementById('bonus-val').innerText = stats.ecoBonuses;
+            
+            const carbonPerc = (stats.carbon / stats.carbonLimit) * 100;
+            const carbonBar = document.getElementById('carbon-bar');
+            carbonBar.style.width = `${Math.min(carbonPerc, 100)}%`;
+            document.getElementById('carbon-percent').innerText = `${Math.round(carbonPerc)}%`;
+            carbonBar.className = `carbon-limit-bar ${carbonPerc > 85 ? 'bg-red-600' : carbonPerc > 60 ? 'bg-yellow-500' : 'bg-emerald-500'}`;
 
-            // Ticker Update
-            const ticker = document.getElementById('ticker');
-            ticker.innerText = tickerMessages[Math.floor(Math.random() * tickerMessages.length)] + " | " + ticker.innerText;
-
-            if (currentTurn < gameData.length) {
-                const data = gameData[currentTurn];
-                document.getElementById('turn-display').innerText = (currentTurn + 1).toString().padStart(2, '0');
-                document.getElementById('phase-display').innerText = `ZONE: ${data.phase}`;
+            if (currentDecision < gameData.length) {
+                const data = gameData[currentDecision];
+                document.getElementById('game-clock').innerText = `PHASE ${currentDecision + 1}`;
+                document.getElementById('step-count').innerText = `${(currentDecision + 1).toString().padStart(2, '0')} / ${gameData.length.toString().padStart(2, '0')}`;
+                document.getElementById('phase-tag').innerText = data.module;
                 document.getElementById('question-title').innerText = data.title;
                 document.getElementById('question-desc').innerText = data.desc;
-                document.getElementById('advisor-tip').innerText = `"${data.options[0].tip}"`;
 
-                const container = document.getElementById('options-container');
-                container.innerHTML = '';
+                const grid = document.getElementById('options-grid');
+                grid.innerHTML = '';
                 data.options.forEach((opt, idx) => {
                     const btn = document.createElement('button');
-                    btn.className = "sim-button p-4 text-left flex justify-between items-center group hover:bg-white";
+                    const canAfford = stats.budget >= opt.cost;
+                    btn.className = `sim-button p-4 text-left rounded-lg group flex flex-col justify-between border-2 border-transparent transition-all ${!canAfford ? 'opacity-40 cursor-not-allowed' : 'hover:border-emerald-500'}`;
+                    btn.disabled = !canAfford;
                     btn.innerHTML = `
-                        <div class="flex flex-col">
-                            <span class="text-xl font-black italic uppercase">${opt.label}</span>
+                        <div>
+                            <div class="flex justify-between items-start">
+                                <span class="font-bold text-lg uppercase text-white">${opt.label}</span>
+                                <span class="pixel-font text-emerald-500">-$${(opt.cost/1000).toFixed(0)}K</span>
+                            </div>
+                            <div class="leaf-rating text-xs mb-2">${"🍃".repeat(opt.rating)}</div>
                         </div>
-                        <div class="pixel-font text-lg text-gray-600">
-                            $${Math.abs(opt.budget)}M
+                        <div class="text-[10px] font-bold uppercase tracking-widest ${opt.carbon > 500 ? 'text-red-400' : 'text-emerald-400'}">
+                            Footprint: ${opt.carbon > 0 ? '+' : ''}${opt.carbon} MT
                         </div>
                     `;
-                    btn.onclick = () => selectOption(idx);
-                    container.appendChild(btn);
+                    btn.onclick = () => handleChoice(idx);
+                    grid.appendChild(btn);
                 });
             } else {
-                showEndScreen();
+                showResults();
             }
         }
 
-        function selectOption(idx) {
-            const opt = gameData[currentTurn].options[idx];
+        function handleChoice(idx) {
+            const opt = gameData[currentDecision].options[idx];
             stats.carbon += opt.carbon;
-            stats.budget += opt.budget;
-            stats.rep = Math.max(0, Math.min(100, stats.rep + opt.rep));
+            stats.budget -= opt.cost;
+            stats.revenue += opt.revenue;
+            
+            if (opt.isBest) stats.ecoBonuses++;
+            
+            document.getElementById('eco-badge').classList.toggle('hidden', !opt.isBest);
+            document.getElementById('impact-card').className = `bg-slate-900 border-2 ${opt.isBest ? 'border-emerald-500 shadow-[0_0_30px_rgba(16,185,129,0.3)]' : 'border-slate-700'} p-8 rounded-lg relative overflow-hidden`;
+            document.getElementById('feedback-body').innerText = opt.feedback;
+            document.getElementById('decision-content').classList.add('hidden');
+            document.getElementById('feedback-layer').classList.remove('hidden');
 
-            document.getElementById('options-container').classList.add('hidden');
-            document.getElementById('question-desc').classList.add('hidden');
-            document.getElementById('feedback-panel').classList.remove('hidden');
-            document.getElementById('feedback-text').innerText = opt.feedback;
+            if (stats.carbon >= stats.carbonLimit) gameOver("CARBON AUDIT FAILURE: Your emissions exceeded federal limits. The CEO has been replaced.");
         }
 
-        function nextTurn() {
-            currentTurn++;
-            document.getElementById('options-container').classList.remove('hidden');
-            document.getElementById('question-desc').classList.remove('hidden');
-            document.getElementById('feedback-panel').classList.add('hidden');
-            
-            if (stats.budget <= 0) {
-                document.getElementById('decision-card').innerHTML = `
-                    <div class="text-center py-20">
-                        <h2 class="pixel-font text-6xl text-red-600">BANKRUPT</h2>
-                        <p class="text-xl">THE UNIVERSITY HAS REVOKED YOUR CHARTER.</p>
-                        <button onclick="location.reload()" class="mt-8 sim-button bg-red-600 text-white p-4">RESTART SIM</button>
-                    </div>
-                `;
-            } else {
-                updateUI();
-            }
+        function nextDecision() {
+            currentDecision++;
+            document.getElementById('decision-content').classList.remove('hidden');
+            document.getElementById('feedback-layer').classList.add('hidden');
+            if (stats.budget < -500000) gameOver("BANKRUPTCY: Your green initiatives outpaced your revenue. The company is insolvent.");
+            else updateUI();
         }
 
-        function showEndScreen() {
-            document.getElementById('decision-card').classList.add('hidden');
-            document.getElementById('end-screen').classList.remove('hidden');
-            
-            let grade = "F";
-            if (stats.carbon < 1500) grade = "A+";
-            else if (stats.carbon < 2500) grade = "B";
-            else if (stats.carbon < 3500) grade = "C";
-
+        function showResults() {
+            document.getElementById('decision-content').classList.add('hidden');
+            document.getElementById('results-screen').classList.remove('hidden');
+            const totalWealth = stats.budget + stats.revenue;
+            let rank = stats.ecoBonuses === 5 ? "NET ZERO HERO" : stats.carbon < 1000 ? "LCA EXPERT" : stats.carbon < 3000 ? "SUSTAINABLE MANAGER" : "COMPLIANCE ONLY";
             document.getElementById('final-stats').innerHTML = `
-                <p>> CALCULATING LIFE CYCLE IMPACT...</p>
-                <p>> ANALYZING GWP (GLOBAL WARMING POTENTIAL)...</p>
-                <p class="text-white mt-4 underline">FINAL REPORT:</p>
-                <p>TOTAL EMBODIED CARBON: ${stats.carbon} KG CO2e</p>
-                <p>UF ENDOWMENT REMAINING: $${stats.budget.toFixed(2)}M</p>
-                <p>CAMPUS APPROVAL RATING: ${stats.rep}%</p>
-                <div class="mt-6 border-2 border-green-400 p-4">
-                    <p class="text-3xl font-bold">FINAL GRADE: ${grade}</p>
-                    <p class="text-sm mt-2">${grade === 'A+' ? 'The greenest building in SEC history!' : 'Needs improvement in material circularity.'}</p>
+                <div class="grid grid-cols-3 gap-4 mb-6">
+                    <div class="bg-slate-900 p-4 rounded">
+                        <p class="text-[10px] uppercase text-slate-500">Net Carbon</p>
+                        <p class="text-3xl pixel-font text-white">${stats.carbon} MT</p>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded">
+                        <p class="text-[10px] uppercase text-slate-500">Treasury</p>
+                        <p class="text-3xl pixel-font text-emerald-400">$${(totalWealth/1000).toFixed(0)}K</p>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded">
+                        <p class="text-[10px] uppercase text-slate-500">Eco-Score</p>
+                        <p class="text-3xl pixel-font text-blue-400">${stats.ecoBonuses}/5</p>
+                    </div>
+                </div>
+                <h3 class="text-4xl font-black text-emerald-500 uppercase">${rank}</h3>
+                <p class="text-slate-400 mt-2 italic border-l-2 border-slate-700 pl-4">Your management of the product's life cycle has been noted by the board.</p>
+            `;
+        }
+
+        function gameOver(msg) {
+            document.getElementById('game-arena').innerHTML = `
+                <div class="text-center py-20">
+                    <h2 class="text-6xl font-black text-red-600 uppercase mb-4">FAILED</h2>
+                    <p class="text-slate-300 max-w-md mx-auto mb-8">${msg}</p>
+                    <button onclick="location.reload()" class="bg-red-600 text-white px-8 py-3 rounded font-black uppercase">Try Again</button>
                 </div>
             `;
         }
